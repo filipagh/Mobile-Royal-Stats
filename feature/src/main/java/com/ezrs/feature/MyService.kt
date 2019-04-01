@@ -1,40 +1,19 @@
 package com.ezrs.feature
 
 
-import android.app.ActivityManager
-
-import android.graphics.Color;
-
-import android.support.v4.content.ContextCompat;
-
-import android.view.Gravity;
-
-
 import android.content.Intent
-import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.IBinder
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityCompat.startActivityForResult
-import android.support.v4.app.FragmentActivity
-import android.support.v4.app.FragmentManager
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.ButtonBarLayout
+import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.Button
-import android.widget.TextView
-import com.bsk.floatingbubblelib.FloatingBubbleService
 import com.bsk.floatingbubblelib.FloatingBubbleConfig
-import com.bsk.floatingbubblelib.FloatingBubblePhysics
-import com.bsk.floatingbubblelib.FloatingBubbleTouch
-import com.ezrs.feature.R.id.textik2
-import io.swagger.client.api.*
-import io.swagger.client.model.Tag
-import org.json.JSONArray
-import org.json.JSONObject
+import com.bsk.floatingbubblelib.FloatingBubbleService
+import io.swagger.client.api.UsersApi
 
 
 class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
@@ -42,7 +21,6 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
     // Service() {
-
 
     lateinit var root : View
     lateinit var bubbleUtils: BubbleUtils
@@ -57,6 +35,7 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
 
         return super.onStartCommand(intent, flags, startId)
 
+
     }
 
 
@@ -66,11 +45,6 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
 
         var button: Button? = null
         button = root.findViewById(R.id.button) as Button
-
-
-
-          var viewp : ViewPager = root.findViewById(R.id.pager) as ViewPager
-          viewp.adapter =CustomPagerAdapter(this)
 
         button.setOnClickListener {
             klik(root)
@@ -118,17 +92,10 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
 
     fun klik(vstup: View) {
 
-
-
-
        // bubbleUtils.onTap(true)
-
-
 //        var a = getRecentTasks(5,0,0)
-//
 //        val r = 54
 
-//
 //        val textik = vstup.findViewById(R.id.textik1) as TextView
 //////        textik.text = "HURA2"
 //        val client = PlayersApi()
@@ -140,8 +107,18 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
 //
 //        }
 //        textik.text = client.sayHello()
-        val operation = LongOperation()
-        operation.execute("")
+        //val operation = LongOperation()
+        //operation.execute("")
+        val dialogIntent = Intent(this, LoginActivity::class.java)
+        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(dialogIntent)
+    }
+
+    fun login(vstup: View) {
+        val dialogIntent = Intent(this, LoginActivity::class.java)
+        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(dialogIntent)
+        setState(false)
     }
 
 
@@ -149,13 +126,13 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
 
         override fun doInBackground(vararg params: String): String {
             val client = UsersApi()
-            client.basePath = "http://192.168.1.20:8080/Mobile_Royal_Stats_Server_war_exploded/rest"
+            client.basePath = API_BASE_PATH
             return client.sayHello()
         }
 
         override fun onPostExecute(result: String) {
-            val textik : TextView = root.findViewById(textik2) as TextView
-            textik.text = result
+//            val textik : TextView = root.findViewById(textik2) as TextView
+//            textik.text = result
 //            txt.text = "Executed" // txt.setText(result);
             // might want to change "executed" for the returned string passed
             // into onPostExecute() but that is upto you
@@ -164,6 +141,10 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
         override fun onPreExecute() {}
 
         override fun onProgressUpdate(vararg values: Void) {}
+    }
+
+    companion object {
+        const val API_BASE_PATH = "http://192.168.0.207:8080/Mobile_Royal_Stats_Server_war_exploded/rest"
     }
 
 
