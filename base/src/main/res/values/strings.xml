@@ -4,4 +4,5 @@
     <string name="title_activity_register">Register</string>
     <string name="title_activity_screenshot">Screenshot</string>
     <string name="title_activity_clan">Clan</string>
+    <string name="title_activity_create_condition">CreateCondition</string>
 </resources>

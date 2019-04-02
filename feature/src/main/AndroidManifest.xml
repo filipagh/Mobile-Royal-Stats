@@ -10,6 +10,10 @@
 
     <application>
         <activity
+                android:name=".CreateCondition"
+                android:label="@string/title_activity_create_condition">
+        </activity>
+        <activity
                 android:name=".Clan"
                 android:label="@string/title_activity_clan">
         </activity>
