@@ -9,8 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
 import io.swagger.client.api.UsersApi
 import io.swagger.client.model.User
 import io.swagger.client.model.UserView
@@ -145,9 +143,9 @@ class Register : Activity() {
         }
 
         override fun onPostExecute(success: UserView) {
-            (findViewById<LinearLayout>(R.id.email_login_form)).visibility = View.GONE
+            /*(findViewById<LinearLayout>(R.id.email_login_form)).visibility = View.GONE
             (findViewById<LinearLayout>(R.id.logged_in_view)).visibility = View.VISIBLE
-            (findViewById<TextView>(R.id.logged_in_text)).text = success.apiKey
+            (findViewById<TextView>(R.id.logged_in_text)).text = success.apiKey*/
         }
 
         override fun onCancelled() {

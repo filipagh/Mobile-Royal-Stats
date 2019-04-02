@@ -4,7 +4,7 @@ package com.ezrs.feature
 
 
 enum class CustomPagers constructor(var mTitleResId: Int, var mLayoutResId: Int) {
-
+    CLAN_NEW(1, R.layout.clan_new),
     RED(0, R.layout.fragment_tab1),
     REDD(1, R.layout.fragment_tab1);
 

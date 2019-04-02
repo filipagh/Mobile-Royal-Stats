@@ -1,6 +1,7 @@
 package com.ezrs.feature
 
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -88,15 +89,13 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
     /////////////////////////////
 
 
-
-
-    fun klik(vstup: View) {
+    fun klik(v: View) {
 
        // bubbleUtils.onTap(true)
 //        var a = getRecentTasks(5,0,0)
 //        val r = 54
 
-//        val textik = vstup.findViewById(R.id.textik1) as TextView
+//        val textik = v.findViewById(R.id.textik1) as TextView
 //////        textik.text = "HURA2"
 //        val client = PlayersApi()
 //        client.basePath = "http://192.168.0.187:8080/Mobile_Royal_Stats_Server_war_exploded/rest"
@@ -114,13 +113,26 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
         startActivity(dialogIntent)
     }
 
-    fun login(vstup: View) {
+    fun login(v: View) {
         val dialogIntent = Intent(this, LoginActivity::class.java)
         dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(dialogIntent)
         setState(false)
     }
 
+    fun clan(v: View) {
+        if (getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, "") == "") {
+            val dialogIntent = Intent(this, LoginActivity::class.java)
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(dialogIntent)
+            setState(false)
+        } else {
+            val dialogIntent = Intent(this, Clan::class.java)
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(dialogIntent)
+            setState(false)
+        }
+    }
 
     private inner class LongOperation : AsyncTask<String, Void, String>() {
 

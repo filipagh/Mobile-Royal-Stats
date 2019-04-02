@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:context=".Clan">
+    <ProgressBar
+            android:id="@+id/clan_progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"/>
+
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editText" android:hint="@string/clan_token"/>
+    <Button
+            android:text="@string/join_clan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/button4" android:layout_marginBottom="50px"/>
+    <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editText2" android:hint="@string/clan_name"/>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:hint="@string/game_id"
+            android:ems="10"
+            android:id="@+id/game_id"/>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:hint="@string/clan_token"
+            android:ems="10"
+            android:id="@+id/token"/>
+    <Button
+            android:text="@string/create_clan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/button5"
+            android:onClick="createClan"/>
+    <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    <TextView
+            android:text="@string/current_clan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/textView3"/>
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/textView4"/>
+</LinearLayout>
