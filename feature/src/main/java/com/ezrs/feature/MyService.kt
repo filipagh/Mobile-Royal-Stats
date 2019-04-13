@@ -156,7 +156,7 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
     }
 
     companion object {
-        const val API_BASE_PATH = "http://192.168.0.207:8080/Mobile_Royal_Stats_Server_war_exploded/rest"
+        const val API_BASE_PATH = "http://192.168.1.111:8080/Mobile_Royal_Stats_Server_war_exploded/rest"
     }
 
 

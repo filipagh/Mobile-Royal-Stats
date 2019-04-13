@@ -13,7 +13,6 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.ezrs.feature.MyService.Companion.API_BASE_PATH
 import io.swagger.client.ApiException
 import io.swagger.client.api.UsersApi
 import io.swagger.client.model.User
@@ -102,7 +101,8 @@ class LoginActivity : Activity() {
 
     private fun isPasswordValid(password: String): Boolean {
         //TODO: Replace this with your own logic
-        return password.length > 4
+//        return password.length > 4
+        return true
     }
 
     /**
@@ -152,7 +152,7 @@ class LoginActivity : Activity() {
         override fun doInBackground(vararg params: Void): Result<UserView> {
             // TODO: attempt authentication against a network service.
             val api = UsersApi()
-            api.basePath = API_BASE_PATH
+//            api.basePath = API_BASE_PATH
             val u = User()
             u.email = mEmail
             u.password = mPassword

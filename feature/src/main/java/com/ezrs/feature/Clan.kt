@@ -9,6 +9,7 @@ import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -33,16 +34,12 @@ class Clan : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_clan)
         pager.offscreenPageLimit = 5
-//        val pullToRefresh = findViewById(R.id.swipeToRefresh) as SwipeRefreshLayout
-//        pullToRefresh.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
-//            refreshData() // your code
-//            pullToRefresh.setRefreshing(false)
-//        })
     }
 
 
     private fun refreshData() {
         vm = LinearLayoutManager(this)
+        GetClanConditions().execute()
     }
 
     override fun onResume() {
@@ -51,6 +48,25 @@ class Clan : Activity() {
         viewp.adapter = CustomPagerAdapter(this)
         val clanTask = GetClanTask()
         clanTask.execute()
+
+        val listener = object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {}
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+
+            override fun onPageSelected(position: Int) {
+                if(position == 2) {
+                    val pullToRefresh = findViewById(R.id.swipeToRefresh) as SwipeRefreshLayout
+                    pullToRefresh.setOnRefreshListener {
+                        refreshData() // your code
+                        pullToRefresh.isRefreshing = false
+                    }
+                }
+            }
+        }
+
+        viewp.addOnPageChangeListener(listener)
+
+
 //        button5.setOnClickListener { createClan()}
     }
 
