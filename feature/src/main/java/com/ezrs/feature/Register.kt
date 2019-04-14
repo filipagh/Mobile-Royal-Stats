@@ -9,6 +9,8 @@ import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import io.swagger.client.api.UsersApi
 import io.swagger.client.model.User
 import io.swagger.client.model.UserView
