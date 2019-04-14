@@ -1,6 +1,8 @@
 package com.ezrs.feature
 
 
+
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -128,20 +130,33 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
 
     /////////////////////////////
 
-
     fun klik(vstup: View) {
-
         val dialogIntent = Intent(this, LoginActivity::class.java)
         dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(dialogIntent)
 
     }
 
-    fun login(vstup: View) {
+    fun login(v: View) {
         val dialogIntent = Intent(this, LoginActivity::class.java)
         dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(dialogIntent)
         setState(false)
+    }
+
+
+    fun clan(v: View) {
+        if (getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, "") == "") {
+            val dialogIntent = Intent(this, LoginActivity::class.java)
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(dialogIntent)
+            setState(false)
+        } else {
+            val dialogIntent = Intent(this, Clan::class.java)
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(dialogIntent)
+            setState(false)
+        }
     }
 
     fun scrShot(vstup: View) {
@@ -150,7 +165,6 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
         startActivity(dialogIntent)
         setState(false)
     }
-
 
     private inner class LongOperation : AsyncTask<String, Void, String>() {
 

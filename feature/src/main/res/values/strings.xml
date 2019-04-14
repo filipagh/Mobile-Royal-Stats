@@ -18,4 +18,13 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="action_register">Register</string>
     <string name="prompt_name">Name</string>
+    <string name="join_clan">Join clan</string>
+    <string name="create_clan">Create clan</string>
+    <string name="clan_token">Clan token</string>
+    <string name="clan_name">Clan name</string>
+    <string name="current_clan">Current_clan:</string>
+    <string name="loading">loading...</string>
+    <string name="game_id">Game ID</string>
+    <string name="name">Name</string>
+    <string name="save">Save</string>
 </resources>

@@ -4,9 +4,9 @@ package com.ezrs.feature
 
 
 enum class CustomPagers constructor(var mTitleResId: Int, var mLayoutResId: Int) {
-
-    RED(0, R.layout.fragment_tab1),
-    REDD(1, R.layout.fragment_tab1);
+    CLAN_NEW(0, R.layout.clan_new),
+    CLAN_USERS(1, R.layout.clan_users),
+    CLAN_CONDITIONS(2, R.layout.clan_conditions);
 
 
     fun CustomPagerEnum(titleResId: Int, layoutResId: Int) {
