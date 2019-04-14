@@ -1,29 +1,40 @@
 package com.ezrs.feature
 
 
+
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.IBinder
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.LocalBroadcastManager
+import android.support.v4.widget.NestedScrollView
 import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import com.bsk.floatingbubblelib.FloatingBubbleConfig
 import com.bsk.floatingbubblelib.FloatingBubbleService
+import io.swagger.client.api.PlayersApi
 import io.swagger.client.api.UsersApi
+import io.swagger.client.model.Tag
+import io.swagger.client.model.UserStat
 
 
-class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
+class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
     override fun onFragmentInteraction(uri: Uri) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
     // Service() {
 
-    lateinit var root : View
+    lateinit var root: View
+    lateinit var rootPlayerStats: View
+    lateinit var playerStatsContent: UserStat
     lateinit var bubbleUtils: BubbleUtils
 
     override fun onBind(intent: Intent): IBinder? {
@@ -31,16 +42,42 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d("aa", "tu som")
 
-        Log.d("aa","tu som")
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                IntentFilter("PlayerStatsTag"))
 
         return super.onStartCommand(intent, flags, startId)
 
 
     }
 
+    private val mMessageReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            // Get extra data included in the Intent
+            val tag = intent.getStringExtra("Tag")
+            Log.d("receiver", "Got message: $tag")
+            if (!tag.isNullOrEmpty()) {
+                val task = LoadPlayerStatsTask(tag)
+                task.execute()
+                rootPlayerStats.visibility = View.VISIBLE
+                setState(true)
+            } else {
+                rootPlayerStats.visibility = View.GONE
+                setState(true)
+            }
+        }
+    }
 
-      override fun getConfig(): FloatingBubbleConfig {
+
+    override fun onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver)
+        super.onDestroy()
+    }
+
+
+    override fun getConfig(): FloatingBubbleConfig {
         root = getInflater().inflate(R.layout.test1, null)
         val gombik = Button(context)
 
@@ -50,9 +87,14 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
         button.setOnClickListener {
             klik(root)
         }
-        bubbleUtils = BubbleUtils(context,root)
 
-          // tuto treba dako mu vysvetlit nech zobere nase BubbleUtil a nie jeho default ale zatial nwm ako
+        val playerStatsSlot = root.findViewById(R.id.playerStatsSlot) as NestedScrollView
+        rootPlayerStats = getInflater().inflate(R.layout.player_stats, playerStatsSlot)
+        rootPlayerStats.visibility = View.GONE
+
+        bubbleUtils = BubbleUtils(context, root)
+
+        // tuto treba dako mu vysvetlit nech zobere nase BubbleUtil a nie jeho default ale zatial nwm ako
 //        this.setTouchListener() {
 //            super.getTouchListener()
 //
@@ -88,29 +130,11 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
 
     /////////////////////////////
 
-
-    fun klik(v: View) {
-
-       // bubbleUtils.onTap(true)
-//        var a = getRecentTasks(5,0,0)
-//        val r = 54
-
-//        val textik = v.findViewById(R.id.textik1) as TextView
-//////        textik.text = "HURA2"
-//        val client = PlayersApi()
-//        client.basePath = "http://192.168.0.187:8080/Mobile_Royal_Stats_Server_war_exploded/rest"
-//        var tag = Tag()
-////        tag.tag = "88UPPPVR8"
-//        val nieco = client.info(tag)
-//        val task = AsyncTask() {
-//
-//        }
-//        textik.text = client.sayHello()
-        //val operation = LongOperation()
-        //operation.execute("")
+    fun klik(vstup: View) {
         val dialogIntent = Intent(this, LoginActivity::class.java)
         dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(dialogIntent)
+
     }
 
     fun login(v: View) {
@@ -119,6 +143,7 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
         startActivity(dialogIntent)
         setState(false)
     }
+
 
     fun clan(v: View) {
         if (getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, "") == "") {
@@ -132,6 +157,13 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
             startActivity(dialogIntent)
             setState(false)
         }
+    }
+
+    fun scrShot(vstup: View) {
+        val dialogIntent = Intent(this, PlayerStatsActivity::class.java)
+        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(dialogIntent)
+        setState(false)
     }
 
     private inner class LongOperation : AsyncTask<String, Void, String>() {
@@ -155,8 +187,42 @@ class MyService : FloatingBubbleService(),Tab1.OnFragmentInteractionListener {
         override fun onProgressUpdate(vararg values: Void) {}
     }
 
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    inner class LoadPlayerStatsTask internal constructor(val tag: String) : AsyncTask<Void, Void, UserStat>() {
+
+        override fun doInBackground(vararg params: Void): UserStat? {
+            // TODO: attempt authentication against a network service.
+            val api = PlayersApi()
+            api.basePath = MyService.API_BASE_PATH
+            val t = Tag()
+            t.tag = tag
+            try {
+                return api.info(t)
+            } catch (e:Exception)
+            {
+                Log.d("EX","async task ${e.toString()}")
+                cancel(true)
+                return null
+            }
+        }
+
+        override fun onPostExecute(success: UserStat) {
+            bubbleUtils.updatePlayerStatsLayout(rootPlayerStats, success)
+        }
+
+        override fun onCancelled() {
+         val w =5
+        cancel(true)
+//            mAuthTask = null
+//            showProgress( false)
+        }
+    }
+
     companion object {
-        const val API_BASE_PATH = "http://192.168.1.111:8080/Mobile_Royal_Stats_Server_war_exploded/rest"
+        const val API_BASE_PATH = "http://192.168.1.20:8080/Mobile_Royal_Stats_Server_war_exploded/rest"
     }
 
 

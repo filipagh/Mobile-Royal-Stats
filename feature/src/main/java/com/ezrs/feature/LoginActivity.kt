@@ -163,7 +163,6 @@ class LoginActivity : Activity() {
             }
 
         }
-
         override fun onPostExecute(r: Result<UserView>) {
             try {
                 val success = r.getOrThrow()
@@ -184,7 +183,7 @@ class LoginActivity : Activity() {
 
         override fun onCancelled() {
             mAuthTask = null
-            showProgress(false)
+            showProgress( false)
         }
     }
 

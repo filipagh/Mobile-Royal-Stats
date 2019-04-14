@@ -36,7 +36,7 @@ dependencies {
 
 //    implementation group: 'com.asprise.ocr', name: 'java-ocr-api', version: '[15,)'
     implementation 'com.google.android.gms:play-services-vision:11.0.4'
-    implementation "io.swagger:swagger-android-client:1.0.0"
+    implementation "io.swagger:swagger-android-client:1.0.2"
 
     implementation project(':base')
     testImplementation 'junit:junit:4.12'
