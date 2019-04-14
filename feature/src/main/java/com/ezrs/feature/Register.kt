@@ -145,9 +145,9 @@ class Register : Activity() {
         }
 
         override fun onPostExecute(success: UserView) {
-            (findViewById<LinearLayout>(R.id.email_login_form)).visibility = View.GONE
-            (findViewById<LinearLayout>(R.id.logged_in_view)).visibility = View.VISIBLE
-            (findViewById<TextView>(R.id.logged_in_text)).text = success.apiKey
+            (findViewById(R.id.email_login_form)as LinearLayout).visibility = View.GONE
+            (findViewById(R.id.logged_in_view)as LinearLayout).visibility = View.VISIBLE
+            (findViewById(R.id.logged_in_text)as TextView).text = success.apiKey
         }
 
         override fun onCancelled() {
