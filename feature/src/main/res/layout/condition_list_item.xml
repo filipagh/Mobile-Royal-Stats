@@ -11,50 +11,58 @@
                                         app:cardBackgroundColor="#ffffff"
                                         android:layout_marginTop="0dp"
                                         card_view:cardCornerRadius="1dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent">
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight=".80"
+                    android:layout_height="wrap_content" android:orientation="vertical">
 
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:orientation="vertical">
-
-            <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/conditionListName"
-                    android:height="45dp"
-                    android:gravity="top|center"
-                    android:paddingStart="10dp"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-            />
-            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
                 <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/conditionListField"
+                        android:id="@+id/conditionListName"
                         android:height="45dp"
-                        android:gravity="bottom|start"
+                        android:gravity="top|center"
                         android:paddingStart="10dp"
+                        android:textStyle="bold"
                         android:textSize="18sp"
                 />
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/conditionListOperator"
-                        android:height="45dp"
-                        android:gravity="bottom|center"
-                        android:textSize="18sp"
-                />
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/conditionListValue"
-                        android:height="45dp"
-                        android:gravity="bottom|end"
-                        android:paddingEnd="10dp"
-                        android:textSize="18sp"
-                />
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/conditionListField"
+                            android:height="45dp"
+                            android:gravity="bottom|start"
+                            android:paddingStart="10dp"
+                            android:textSize="18sp"
+                    />
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/conditionListOperator"
+                            android:height="45dp"
+                            android:gravity="bottom|center"
+                            android:textSize="18sp"
+                    />
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/conditionListValue"
+                            android:height="45dp"
+                            android:gravity="bottom|end"
+                            android:paddingEnd="10dp"
+                            android:textSize="18sp"
+                    />
+                </LinearLayout>
             </LinearLayout>
-
+            <Button
+                    android:layout_width="0dp"
+                    android:layout_weight=".20"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:text="delete"
+                    android:id="@+id/deleteCondition"/>
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
