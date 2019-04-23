@@ -9,13 +9,17 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Spinner
+import android.widget.Toast
 import io.swagger.client.ApiException
 import io.swagger.client.api.ConditionsApi
 import io.swagger.client.model.ConditionView
 import kotlinx.android.synthetic.main.activity_create_condition.*
 
 class CreateCondition : Activity() {
+
+    var id = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +38,28 @@ class CreateCondition : Activity() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             operator.adapter = adapter
         }
+        if (intent.extras != null) {
+            if (intent.extras[INTENT_ID] != null) {
+                val api = ConditionsApi()
+                api.get(intent.extras[INTENT_ID] as Int, getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, ""), { view ->
+                    val field: Spinner = findViewById(R.id.field) as Spinner
+                    val fields = resources.getStringArray(R.array.fields_array)
+                    fields.sort()
+                    field.setSelection(fields.binarySearch(view.field))
 
+                    val operator: Spinner = findViewById(R.id.operator) as Spinner
+                    val operators = resources.getStringArray(R.array.operators_array)
+                    operators.sort()
+                    operator.setSelection(operators.binarySearch(view.operator))
+
+                    val name: EditText = findViewById(R.id.name) as EditText
+                    name.setText(view.name)
+                    val value: EditText = findViewById(R.id.value) as EditText
+                    value.setText(view.value)
+                    id = view.id
+                }, {})
+            }
+        }
     }
 
     fun createCondition(v: View) {
@@ -92,7 +117,13 @@ class CreateCondition : Activity() {
             val api = ConditionsApi()
             api.basePath = MyService.API_BASE_PATH
             return try {
-                Result.success(api.create(v, getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, "")))
+                if (id == -1) {
+                    Result.success(api.create(v, getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, "")))
+                } else {
+                    v.id = id
+                    Result.success(api.update(v, getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, "")))
+                }
+
             } catch (e: ApiException) {
                 Result.failure(e)
             }
@@ -102,6 +133,10 @@ class CreateCondition : Activity() {
         override fun onPostExecute(r: Result<ConditionView>) {
             try {
                 val success = r.getOrThrow()
+                val text = "Podmienka pridana!"
+                val duration = Toast.LENGTH_SHORT
+                val toast = Toast.makeText(applicationContext, text, duration)
+                toast.show()
                 finish()
             } catch (e: ApiException) {
                 name.error = "Something went wrong with code: " + e.code
@@ -113,5 +148,9 @@ class CreateCondition : Activity() {
         override fun onCancelled() {
             showProgress(false)
         }
+    }
+
+    companion object {
+        const val INTENT_ID = "id"
     }
 }

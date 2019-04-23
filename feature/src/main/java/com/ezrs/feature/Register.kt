@@ -9,8 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.Toast
 import io.swagger.client.api.UsersApi
 import io.swagger.client.model.User
 import io.swagger.client.model.UserView
@@ -145,10 +144,15 @@ class Register : Activity() {
         }
 
         override fun onPostExecute(success: UserView) {
-
-            (findViewById(R.id.email_login_form)as LinearLayout).visibility = View.GONE
-            (findViewById(R.id.logged_in_view)as LinearLayout).visibility = View.VISIBLE
-            (findViewById(R.id.logged_in_text)as TextView).text = success.apiKey
+            /*(findViewById<LinearLayout>(R.id.email_login_form)).visibility = View.GONE
+            (findViewById<LinearLayout>(R.id.logged_in_view)).visibility = View.VISIBLE
+            (findViewById<TextView>(R.id.logged_in_text)).text = success.apiKey*/
+            showProgress(false)
+            val text = "Zaregistrovany!"
+            val duration = Toast.LENGTH_SHORT
+            val toast = Toast.makeText(applicationContext, text, duration)
+            toast.show()
+            finish()
         }
 
         override fun onCancelled() {

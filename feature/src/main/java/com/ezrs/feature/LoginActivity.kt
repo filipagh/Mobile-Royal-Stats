@@ -49,7 +49,7 @@ class LoginActivity : Activity() {
 
     private fun attemptLogin() {
         if (mAuthTask != null) {
-            return
+//            return
         }
 
         // Reset errors.
@@ -168,7 +168,7 @@ class LoginActivity : Activity() {
                 val success = r.getOrThrow()
                 (findViewById(R.id.email_login_form) as LinearLayout).visibility = View.GONE
                 (findViewById(R.id.logged_in_view) as LinearLayout).visibility = View.VISIBLE
-                (findViewById(R.id.logged_in_text) as TextView).text = success.apiKey
+                (findViewById(R.id.logged_in_text) as TextView).text = "Logged in as: " + success.name
                 getSharedPreferences(PREFERENCE, Activity.MODE_PRIVATE).edit().putString(APIKEY, success.apiKey).apply()
             } catch (e: ApiException) {
                 if (e.code == 401) {
