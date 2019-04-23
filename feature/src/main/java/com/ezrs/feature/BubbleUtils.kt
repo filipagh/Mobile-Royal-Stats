@@ -1,25 +1,9 @@
 package com.ezrs.feature
 
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.ImageFormat
-import android.media.ImageReader
-import android.media.projection.MediaProjectionManager
-import android.os.AsyncTask
-import android.support.v4.app.ActivityCompat.startActivity
-import android.support.v4.app.ActivityCompat.startActivityForResult
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.ContextCompat.getSystemService
-import android.support.v4.view.ViewPager
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import com.bsk.floatingbubblelib.FloatingBubbleTouchListener
-import com.ezrs.feature.R.id.image
-import io.swagger.client.api.PlayersApi
-import io.swagger.client.model.Tag
 import io.swagger.client.model.UserStat
 
 
@@ -52,7 +36,28 @@ class BubbleUtils(var context: Context,var root: View): FloatingBubbleTouchListe
         nameID.text="${playerStats.name} / ${playerStats.tag}"
 
         var clan = root.findViewById(R.id.clanPlayerStats) as TextView
-        clan.text=playerStats.clan.name
+        clan.text="Clan ${playerStats.clan.name}"
+
+        var warDayWins = root.findViewById(R.id.warDayWinsPlayerStats) as TextView
+        warDayWins.text="WDW ${playerStats.games.warDayWins}"
+
+        var cwLast10 = root.findViewById(R.id.cwLast10PlayerStats) as TextView
+        cwLast10.text="Last-10:  ${playerStats.games.winsPercentLast10}"
+
+        var cwLast20 = root.findViewById(R.id.cwLast20PlayerStats) as TextView
+        cwLast20.text="Last-20:  ${playerStats.games.winsPercentLast20}"
+
+        var cwLifeTime = root.findViewById(R.id.cwLifeTimePlayerStats) as TextView
+        cwLifeTime.text="LifeTime: ${playerStats.games.winsPercentLiveTime}"
+
+        var tropy = root.findViewById(R.id.trophyPlayerStats) as TextView
+        tropy.text="Trophy ${playerStats.trophies}"
+
+        var leader = root.findViewById(R.id.leaderPlayerStats) as TextView
+        leader.text="Level ${playerStats.stats.level}"
+
+        var missFinalBattle = root.findViewById(R.id.missedFinalBattlePlayerStats) as TextView
+        missFinalBattle.text="FinalBattleMiss${playerStats.games.warDayBattleMiss}"
     }
 
 

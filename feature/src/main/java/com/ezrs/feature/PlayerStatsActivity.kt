@@ -3,24 +3,17 @@ package com.ezrs.feature
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
+import android.support.v4.content.LocalBroadcastManager
 import android.widget.Button
 import android.widget.EditText
-import com.ezrs.feature.MyService.Companion.API_BASE_PATH
+import android.widget.ImageView
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.text.TextBlock
 import com.google.android.gms.vision.text.TextRecognizer
-import io.swagger.client.api.PlayersApi
-import io.swagger.client.api.UsersApi
-import io.swagger.client.model.Tag
 import io.swagger.client.model.UserStat
-import io.swagger.client.model.UserView
-import android.support.v4.content.LocalBroadcastManager
-import android.text.Editable
 
 
 /**
@@ -64,6 +57,11 @@ class PlayerStatsActivity : Activity() {
             // Do something with the photo based on Uri
             val selectedImage: Bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri)
 
+            var parseImage= Bitmap.createBitmap(selectedImage,20,330,300,400)
+
+            var imageview = findViewById(R.id.scrShotView) as ImageView
+            imageview.setImageBitmap(parseImage)
+
             //Create the TextRecognizer
             val textRecognizer = TextRecognizer.Builder(getApplicationContext()).build()
 
@@ -92,7 +90,7 @@ class PlayerStatsActivity : Activity() {
 
 
             var fb = Frame.Builder()
-            fb.setBitmap(selectedImage)
+            fb.setBitmap(parseImage)
             val frame = fb.build()
             var a = textRecognizer.detect(frame)
             var vysledok = arrayListOf<String>()
@@ -103,9 +101,14 @@ class PlayerStatsActivity : Activity() {
                     //java.lang.IllegalStateException neviem preco toto sa deje
                 }
             }
-
+            var tag = ""
             // TODO nejaky parser
-            val tag = vysledok[0]
+            if (a[1]!=null) {
+                tag = vysledok[1]
+            } else if (a[0]!=null) {
+                tag = vysledok[0]
+            }
+
 
             editID.text.clear()
             editID.text.insert(0, tag)

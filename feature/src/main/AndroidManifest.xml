@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="com.ezrs.feature">
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
@@ -50,6 +51,10 @@
         </activity>
         <activity android:name=".PlayerStatsActivity"/>
 
+        <meta-data
+                tools:replace="android:value"
+                android:name="com.google.android.gms.version"
+                android:value="4030500" />
         <meta-data
                 android:name="com.google.android.gms.vision.DEPENDENCIES"
                 android:value="ocr"/>
