@@ -22,7 +22,9 @@ android {
     kotlinOptions {
         freeCompilerArgs = ["-Xallow-result-return-type"]
     }
-//    exclude {'META-INF/DEPENDENCIES'}
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
 }
 
 dependencies {
@@ -31,11 +33,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "com.github.bijoysingh:floating-bubble:1.2.0"
-//    implementation "com.github.omerjerk:Screenshotter:master-SNAPSHOT"
 
-
-//    implementation group: 'com.asprise.ocr', name: 'java-ocr-api', version: '[15,)'
-    implementation 'com.google.android.gms:play-services-vision:11.0.4'
+    implementation 'com.google.android.gms:play-services-vision:15.0.0'
     implementation "io.swagger:swagger-android-client:1.0.0"
 
     implementation project(':base')
