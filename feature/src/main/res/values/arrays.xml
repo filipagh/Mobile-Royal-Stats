@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="fields_array">
+        <item>played-games</item>
+        <item>rank</item>
+        <item>win-ratio</item>
+        <item>years</item>
+    </string-array>
+    <string-array name="operators_array">
+        <item>==</item>
+        <item>!=</item>
+    </string-array>
+</resources>

@@ -1,1 +1,1 @@
-include ':feature', ':app', ':base', ':instantapp'
+include ':feature', ':app', ':base', ':instantapp', 'com.github.bijoysingh:floating-bubble:1.2.0'
