@@ -16,11 +16,14 @@ import android.view.View
 import io.swagger.client.ApiException
 import io.swagger.client.api.ClansApi
 import io.swagger.client.api.ConditionsApi
+import io.swagger.client.model.ClanStats
 import io.swagger.client.model.ClanView
 import io.swagger.client.model.ConditionView
+import io.swagger.client.model.Tag
 import kotlinx.android.synthetic.main.activity_clan.*
 import kotlinx.android.synthetic.main.clan_conditions.*
 import kotlinx.android.synthetic.main.clan_new.*
+import kotlinx.android.synthetic.main.clan_players.*
 
 
 class Clan : Activity() {
@@ -28,6 +31,8 @@ class Clan : Activity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var vm: RecyclerView.LayoutManager
+    private lateinit var clanPlayerLayoutManager: RecyclerView.LayoutManager
+    private lateinit var userClanStats : ClanView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +47,11 @@ class Clan : Activity() {
         GetClanConditions().execute()
     }
 
+    private fun refreshClanPlayersData() {
+        clanPlayerLayoutManager = LinearLayoutManager(this)
+        GetClanPlayersTask().execute()
+    }
+
     override fun onResume() {
         super.onResume()
         var viewp: ViewPager = findViewById(R.id.pager) as ViewPager
@@ -49,11 +59,20 @@ class Clan : Activity() {
         val clanTask = GetClanTask()
         clanTask.execute()
 
+
+
         val listener = object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
+                if(position == 1) {
+                    val pullToRefresh = findViewById(R.id.clanPlayerSwipeLayout) as SwipeRefreshLayout
+                    pullToRefresh.setOnRefreshListener {
+                        refreshClanPlayersData()
+                        pullToRefresh.isRefreshing = false
+                    }
+                }
                 if(position == 2) {
                     val pullToRefresh = findViewById(R.id.swipeToRefresh) as SwipeRefreshLayout
                     pullToRefresh.setOnRefreshListener {
@@ -177,6 +196,9 @@ class Clan : Activity() {
         override fun onPostExecute(r: Result<ClanView>) {
             try {
                 val success = r.getOrThrow()
+                userClanStats = success
+                refreshData()
+                refreshClanPlayersData()
 //                textView4.text = success.name
             } catch (e: ApiException) {
                 when (e.code) {
@@ -232,6 +254,60 @@ class Clan : Activity() {
 
 
 //                textView4.text = success.name
+            } catch (e: ApiException) {
+                when (e.code) {
+//                    400 -> textView4.text = "Something is missing"
+//                    404 -> textView4.text = "No clan"
+//                    401 -> textView4.text = "Unauthorized"
+//                    500 -> textView4.text = "Something is fucked up"
+                }
+            } finally {
+//                showProgress(false)
+            }
+        }
+
+        override fun onCancelled() {
+//            mAuthTask = null
+            showProgress(false)
+        }
+    }
+
+    inner class GetClanPlayersTask : AsyncTask<Void, Void, Result<ClanStats>>() {
+
+        override fun doInBackground(vararg params: Void): Result<ClanStats> {
+            // TODO: attempt authentication against a network service.
+            val api = ClansApi()
+            api.basePath = MyService.API_BASE_PATH
+
+            return try {
+                val tag = Tag()
+                tag.tag=userClanStats.gameId
+                Result.success(api.info(tag))
+            } catch (e: ApiException) {
+                Result.failure(e)
+            }
+
+        }
+
+        override fun onPostExecute(r: Result<ClanStats>) {
+            try {
+                val success = r.getOrThrow()
+
+                viewAdapter = ClanPlayersAdapter(success)
+
+                clanPlayerRecyclerview.apply {
+                    // use this setting to improve performance if you know that changes
+                    // in content do not change the layout size of the RecyclerView
+                    setHasFixedSize(true)
+
+                    // use a linear layout manager
+                    layoutManager = clanPlayerLayoutManager
+
+                    // specify an viewAdapter (see also next example)
+                    adapter = viewAdapter
+
+                }
+//
             } catch (e: ApiException) {
                 when (e.code) {
 //                    400 -> textView4.text = "Something is missing"

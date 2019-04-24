@@ -57,7 +57,7 @@ class PlayerStatsActivity : Activity() {
             // Do something with the photo based on Uri
             val selectedImage: Bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri)
 
-            var parseImage= Bitmap.createBitmap(selectedImage,20,330,300,400)
+            var parseImage= Bitmap.createBitmap(selectedImage,20,330,300,200)
 
             var imageview = findViewById(R.id.scrShotView) as ImageView
             imageview.setImageBitmap(parseImage)

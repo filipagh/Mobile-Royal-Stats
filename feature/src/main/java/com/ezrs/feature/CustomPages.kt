@@ -5,7 +5,7 @@ package com.ezrs.feature
 
 enum class CustomPagers constructor(var mTitleResId: Int, var mLayoutResId: Int) {
     CLAN_NEW(0, R.layout.clan_new),
-    CLAN_USERS(1, R.layout.clan_users),
+    CLAN_USERS(1, R.layout.clan_players),
     CLAN_CONDITIONS(2, R.layout.clan_conditions);
 
 
