@@ -31,6 +31,8 @@ class BubbleUtils(var context: Context,var root: View): FloatingBubbleTouchListe
 //        drawScrShoot(makeScreenShot())
     }
 
+
+    // refresh data
     fun updatePlayerStatsLayout(root: View,playerStats: UserStat){
         var nameID = root.findViewById(R.id.nameIDPlayerStats) as TextView
         nameID.text="${playerStats.name} / ${playerStats.tag}"

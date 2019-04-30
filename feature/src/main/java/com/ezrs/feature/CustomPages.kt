@@ -2,7 +2,7 @@ package com.ezrs.feature
 
 
 
-
+// tab view
 enum class CustomPagers constructor(var mTitleResId: Int, var mLayoutResId: Int) {
     CLAN_NEW(0, R.layout.clan_new),
     CLAN_USERS(1, R.layout.clan_players),
