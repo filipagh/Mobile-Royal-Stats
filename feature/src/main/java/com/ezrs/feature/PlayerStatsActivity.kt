@@ -84,7 +84,6 @@ class PlayerStatsActivity : Activity() {
                         }
 
                     }
-//                    Log.d("OCR",stringBuilder.toString())
                 }
             })
 
@@ -98,11 +97,9 @@ class PlayerStatsActivity : Activity() {
                 try {
                     vysledok.add(a[i].value)
                 } catch (e: Exception) {
-                    //java.lang.IllegalStateException neviem preco toto sa deje
                 }
             }
             var tag = ""
-            // TODO nejaky parser
             if (a[1]!=null) {
                 tag = vysledok[1]
             } else if (a[0]!=null) {

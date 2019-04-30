@@ -25,7 +25,9 @@ import io.swagger.client.api.UsersApi
 import io.swagger.client.model.Tag
 import io.swagger.client.model.UserStat
 
-
+/**
+ * service na obsluhu bublinky
+ */
 class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
     override fun onFragmentInteraction(uri: Uri) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -42,16 +44,16 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("aa", "tu som")
 
+        //odchytenie player tag z nacitania scrshotu
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 IntentFilter("PlayerStatsTag"))
 
         return super.onStartCommand(intent, flags, startId)
 
-
     }
 
+    // handlovanie udalosti
     private val mMessageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             // Get extra data included in the Intent
@@ -76,7 +78,7 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
         super.onDestroy()
     }
 
-
+    // konfiguracia bublinky
     override fun getConfig(): FloatingBubbleConfig {
         root = getInflater().inflate(R.layout.test1, null)
         val gombik = Button(context)
@@ -93,13 +95,6 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
         rootPlayerStats.visibility = View.GONE
 
         bubbleUtils = BubbleUtils(context, root)
-
-        // tuto treba dako mu vysvetlit nech zobere nase BubbleUtil a nie jeho default ale zatial nwm ako
-//        this.setTouchListener() {
-//            super.getTouchListener()
-//
-//        }
-
 
         return FloatingBubbleConfig.Builder()
 
@@ -127,8 +122,6 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
 
                 .build()
     }
-
-    /////////////////////////////
 
     fun klik(vstup: View) {
         val dialogIntent = Intent(this, LoginActivity::class.java)
@@ -166,29 +159,8 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
         setState(false)
     }
 
-    private inner class LongOperation : AsyncTask<String, Void, String>() {
-
-        override fun doInBackground(vararg params: String): String {
-            val client = UsersApi()
-            client.basePath = API_BASE_PATH
-            return client.sayHello()
-        }
-
-        override fun onPostExecute(result: String) {
-//            val textik : TextView = root.findViewById(textik2) as TextView
-//            textik.text = result
-//            txt.text = "Executed" // txt.setText(result);
-            // might want to change "executed" for the returned string passed
-            // into onPostExecute() but that is upto you
-        }
-
-        override fun onPreExecute() {}
-
-        override fun onProgressUpdate(vararg values: Void) {}
-    }
-
     /**
-     * Represents an asynchronous login/registration task used to authenticate
+     * async task for our api (playerStats)
      * the user.
      */
     inner class LoadPlayerStatsTask internal constructor(val tag: String) : AsyncTask<Void, Void, UserStat>() {
