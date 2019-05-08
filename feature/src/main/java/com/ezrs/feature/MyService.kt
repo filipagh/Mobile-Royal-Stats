@@ -20,10 +20,12 @@ import android.view.View
 import android.widget.Button
 import com.bsk.floatingbubblelib.FloatingBubbleConfig
 import com.bsk.floatingbubblelib.FloatingBubbleService
+import com.google.gson.Gson
+import io.swagger.client.ApiInvoker
 import io.swagger.client.api.PlayersApi
-import io.swagger.client.api.UsersApi
 import io.swagger.client.model.Tag
 import io.swagger.client.model.UserStat
+import okhttp3.WebSocket
 
 /**
  * service na obsluhu bublinky
@@ -38,30 +40,42 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
     lateinit var rootPlayerStats: View
     lateinit var playerStatsContent: UserStat
     lateinit var bubbleUtils: BubbleUtils
+    lateinit var ws : WebSocket
 
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
+
+
+
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         //odchytenie player tag z nacitania scrshotu
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 IntentFilter("PlayerStatsTag"))
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                IntentFilter("PlayerStats"))
 
         return super.onStartCommand(intent, flags, startId)
-
     }
 
     // handlovanie udalosti
     private val mMessageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             // Get extra data included in the Intent
+            val json = intent.getStringExtra("json")
             val tag = intent.getStringExtra("Tag")
             Log.d("receiver", "Got message: $tag")
             if (!tag.isNullOrEmpty()) {
-                val task = LoadPlayerStatsTask(tag)
-                task.execute()
+                val t = Tag()
+                t.tag = tag
+                ws.send(Gson().toJson(t))
+//                val task = LoadPlayerStatsTask(tag)
+//                task.execute()
+            } else if (!json.isNullOrEmpty()) {
+                bubbleUtils.updatePlayerStatsLayout(rootPlayerStats, ApiInvoker.deserialize(json, "", UserStat::class.java)as UserStat )
                 rootPlayerStats.visibility = View.VISIBLE
                 setState(true)
             } else {
@@ -74,6 +88,7 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
 
     override fun onDestroy() {
         // Unregister since the activity is about to be closed.
+        ws.close(1000,"bye")
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver)
         super.onDestroy()
     }
@@ -95,6 +110,8 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
         rootPlayerStats.visibility = View.GONE
 
         bubbleUtils = BubbleUtils(context, root)
+        val webSocketCli = WebSocketCli()
+        ws = webSocketCli.run(bubbleUtils, rootPlayerStats,context)
 
         return FloatingBubbleConfig.Builder()
 
