@@ -29,4 +29,5 @@
     <string name="save">Save</string>
 
     <string name="test">thisistest</string>
+    <string name="nepodarilo_sa_nacitat">Nepodarilo sa nacitat</string>
 </resources>

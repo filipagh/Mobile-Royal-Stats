@@ -12,10 +12,13 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import io.swagger.client.ApiException
 import io.swagger.client.api.ConditionsApi
 import io.swagger.client.model.ConditionView
 import kotlinx.android.synthetic.main.activity_create_condition.*
+import java.util.concurrent.ExecutionException
 
 class CreateCondition : Activity() {
 
@@ -77,21 +80,8 @@ class CreateCondition : Activity() {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private fun showProgress(show: Boolean) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             val shortAnimTime = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
-
-//            clan_form.visibility = if (show) View.GONE else View.VISIBLE
-//            clan_form.animate()
-//                    .setDuration(shortAnimTime)
-//                    .alpha((if (show) 0 else 1).toFloat())
-//                    .setListener(object : AnimatorListenerAdapter() {
-//                        override fun onAnimationEnd(animation: Animator) {
-//                            clan_form.visibility = if (show) View.GONE else View.VISIBLE
-//                        }
-//                    })
 
             create_condition_progress.visibility = if (show) View.VISIBLE else View.GONE
             create_condition_progress.animate()
@@ -103,10 +93,7 @@ class CreateCondition : Activity() {
                         }
                     })
         } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
             create_condition_progress.visibility = if (show) View.VISIBLE else View.GONE
-//            clan_form.visibility = if (show) View.GONE else View.VISIBLE
         }
     }
 
@@ -123,11 +110,9 @@ class CreateCondition : Activity() {
                     v.id = id
                     Result.success(api.update(v, getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, "")))
                 }
-
-            } catch (e: ApiException) {
+            } catch (e: Exception) {
                 Result.failure(e)
             }
-
         }
 
         override fun onPostExecute(r: Result<ConditionView>) {
@@ -137,11 +122,22 @@ class CreateCondition : Activity() {
                 val duration = Toast.LENGTH_SHORT
                 val toast = Toast.makeText(applicationContext, text, duration)
                 toast.show()
+                showProgress(false)
                 finish()
             } catch (e: ApiException) {
                 name.error = "Something went wrong with code: " + e.code
-            } finally {
+            } catch (e: ExecutionException) {
+                val value = getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).getString(PREFERENCE_KEY, "")
+                var list = ArrayList<ConditionView>()
+                val gson = Gson()
+                if (value != "") {
+                    val turnsType = object : TypeToken<ArrayList<ConditionView>>() {}.type
+                    list = gson.fromJson<ArrayList<ConditionView>>(value, turnsType)
+                }
+                list.add(v)
+                getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).edit().putString(PREFERENCE_KEY, gson.toJson(list)).apply()
                 showProgress(false)
+                finish()
             }
         }
 
@@ -152,5 +148,6 @@ class CreateCondition : Activity() {
 
     companion object {
         const val INTENT_ID = "id"
+        const val PREFERENCE_KEY = "create"
     }
 }

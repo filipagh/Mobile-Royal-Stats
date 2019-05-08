@@ -1,7 +1,9 @@
 package com.ezrs.feature
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.os.AsyncTask
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +11,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import io.swagger.client.ApiException
 import io.swagger.client.api.ConditionsApi
 import io.swagger.client.model.ConditionView
+import java.util.concurrent.ExecutionException
+
 
 class ConditionsAdapter(private val myDataset: List<ConditionView>) :
         RecyclerView.Adapter<ConditionsAdapter.MyViewHolder>() {
@@ -52,18 +59,53 @@ class ConditionsAdapter(private val myDataset: List<ConditionView>) :
             view.context.startActivity(intent)
         }
         holder.delete.setOnClickListener { view ->
+            DeleteConditionTask(myDataset[position].id, view.context).execute()
+            val text = "OK!"
+            val duration = Toast.LENGTH_SHORT
+            val toast = Toast.makeText(holder.view.context, text, duration)
+            toast.show()
+//            val api = ConditionsApi()
+//            api.delete(myDataset[position].id, view.context.getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, ""), {
+//                val text = "Zmaze sa!"
+//                val duration = Toast.LENGTH_SHORT
+//                val toast = Toast.makeText(holder.view.context, text, duration)
+//                toast.show()
+//            }, { err ->
+//                val text = "Something went wrong!"
+//                val duration = Toast.LENGTH_SHORT
+//                val toast = Toast.makeText(holder.view.context, text, duration)
+//                toast.show()
+//            })
+        }
+    }
+
+    class DeleteConditionTask constructor(private val v: Int, private val context: Context) : AsyncTask<Void, Void, Void>() {
+
+
+        override fun doInBackground(vararg params: Void): Void? {
+            // TODO: attempt authentication against a network service.
             val api = ConditionsApi()
-            api.delete(myDataset[position].id, view.context.getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, ""), {
-                val text = "Zmazane!"
-                val duration = Toast.LENGTH_SHORT
-                val toast = Toast.makeText(holder.view.context, text, duration)
-                toast.show()
-            }, { err ->
-                val text = "Something went wrong!"
-                val duration = Toast.LENGTH_SHORT
-                val toast = Toast.makeText(holder.view.context, text, duration)
-                toast.show()
-            })
+            api.basePath = MyService.API_BASE_PATH
+            try {
+                api.delete(v, context.getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, ""))
+            } catch (e: ExecutionException) {
+                val value = context.getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).getString(PREFERENCE_KEY, "")
+                var list = ArrayList<Int>()
+                val gson = Gson()
+                if (value != "") {
+                    val turnsType = object : TypeToken<ArrayList<Int>>() {}.type
+                    list = gson.fromJson<ArrayList<Int>>(value, turnsType)
+                }
+                list.add(v)
+                context.getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).edit().putString(PREFERENCE_KEY, gson.toJson(list)).apply()
+            } catch (e: ApiException) {
+
+            }
+            return null
+        }
+
+        companion object {
+            val PREFERENCE_KEY = "DELETE"
         }
     }
 

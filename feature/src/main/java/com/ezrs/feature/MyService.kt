@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.IBinder
@@ -21,10 +22,16 @@ import android.widget.Button
 import com.bsk.floatingbubblelib.FloatingBubbleConfig
 import com.bsk.floatingbubblelib.FloatingBubbleService
 import com.google.gson.Gson
-import io.swagger.client.ApiInvoker
+import com.google.gson.reflect.TypeToken
+import io.swagger.client.ApiException
+import io.swagger.client.api.ConditionsApi
 import io.swagger.client.api.PlayersApi
+import io.swagger.client.model.ConditionView
 import io.swagger.client.model.Tag
 import io.swagger.client.model.UserStat
+import java.util.*
+import java.util.concurrent.ExecutionException
+import io.swagger.client.ApiInvoker
 import okhttp3.WebSocket
 
 /**
@@ -58,7 +65,83 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 IntentFilter("PlayerStats"))
 
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkStateReceiver, filter)
+
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    var networkStateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+
+        override fun onReceive(context: Context, intent: Intent) {
+            val noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)
+
+            if (!noConnectivity) {
+                onConnectionFound()
+            } else {
+                onConnectionLost()
+            }
+        }
+    }
+
+
+    fun onConnectionLost() {
+    }
+
+    fun onConnectionFound() {
+        var value = getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).getString(ConditionsAdapter.DeleteConditionTask.PREFERENCE_KEY, "")
+        getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).edit().remove(ConditionsAdapter.DeleteConditionTask.PREFERENCE_KEY).apply()
+        var toDelete = ArrayList<Int>()
+        val gson = Gson()
+        if (value != "") {
+            val turnsType = object : TypeToken<ArrayList<Int>>() {}.type
+            toDelete = gson.fromJson<ArrayList<Int>>(value, turnsType)
+            toDelete.forEach { v -> ConditionsAdapter.DeleteConditionTask(v, applicationContext).execute() }
+        }
+
+        value = getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).getString(CreateCondition.PREFERENCE_KEY, "")
+        getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).edit().remove(CreateCondition.PREFERENCE_KEY).apply()
+        var toCreate = ArrayList<ConditionView>()
+        if (value != "") {
+            val turnsType = object : TypeToken<ArrayList<ConditionView>>() {}.type
+            toCreate = gson.fromJson<ArrayList<ConditionView>>(value, turnsType)
+            toCreate.forEach { v -> CreateConditionTask(v).execute() }
+        }
+//        tasks.forEach { v -> v.execute() }
+    }
+
+    inner class CreateConditionTask internal constructor(private val v: ConditionView) : AsyncTask<Void, Void, Result<ConditionView>>() {
+
+        override fun doInBackground(vararg params: Void): Result<ConditionView> {
+            val api = ConditionsApi()
+            api.basePath = MyService.API_BASE_PATH
+            return try {
+                if (v.id == null) {
+                    Result.success(api.create(v, getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, "")))
+                } else {
+                    Result.success(api.update(v, getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, "")))
+                }
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+
+        override fun onPostExecute(r: Result<ConditionView>) {
+            try {
+                val success = r.getOrThrow()
+            } catch (e: ApiException) {
+            } catch (e: ExecutionException) {
+                val value = getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).getString(CreateCondition.PREFERENCE_KEY, "")
+                var list = ArrayList<ConditionView>()
+                val gson = Gson()
+                if (value != "") {
+                    val turnsType = object : TypeToken<ArrayList<ConditionView>>() {}.type
+                    list = gson.fromJson<ArrayList<ConditionView>>(value, turnsType)
+                }
+                list.add(v)
+                getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).edit().putString(CreateCondition.PREFERENCE_KEY, gson.toJson(list)).apply()
+            }
+        }
     }
 
     // handlovanie udalosti
@@ -212,7 +295,7 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
 
     companion object {
 
-        const val API_BASE_PATH = "http://pumec.zapto.org:8080/Mobile-Royal-Stats-Server_war/rest"
+        const val API_BASE_PATH = "http://192.168.0.213:8080/Mobile_Royal_Stats_Server_war_exploded/rest"
 
     }
 

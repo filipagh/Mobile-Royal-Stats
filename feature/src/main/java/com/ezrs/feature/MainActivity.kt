@@ -1,21 +1,12 @@
 package com.ezrs.feature
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.res.Resources
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.Toast
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
-
+    //    @RequiresApi(24)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -29,8 +20,10 @@ class MainActivity : AppCompatActivity() {
         //bublinka
         var intent = Intent(this, MyService::class.java)
         var bublinkaService = startService(intent)
+    }
 
-
+    companion object {
+        val TASK_PREFERENCE = "TASKS"
     }
 }
 
