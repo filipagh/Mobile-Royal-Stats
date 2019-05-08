@@ -82,7 +82,7 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
 
     fun onConnectionFound() {
         var value = getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).getString(ConditionsAdapter.DeleteConditionTask.PREFERENCE_KEY, "")
-        getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).edit().remove(ConditionsAdapter.DeleteConditionTask.PREFERENCE_KEY)
+        getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).edit().remove(ConditionsAdapter.DeleteConditionTask.PREFERENCE_KEY).apply()
         var toDelete = ArrayList<Int>()
         val gson = Gson()
         if (value != "") {
@@ -92,7 +92,7 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
         }
 
         value = getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).getString(CreateCondition.PREFERENCE_KEY, "")
-        getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).edit().remove(CreateCondition.PREFERENCE_KEY)
+        getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).edit().remove(CreateCondition.PREFERENCE_KEY).apply()
         var toCreate = ArrayList<ConditionView>()
         if (value != "") {
             val turnsType = object : TypeToken<ArrayList<ConditionView>>() {}.type
