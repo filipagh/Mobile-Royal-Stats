@@ -1,21 +1,19 @@
 package com.ezrs.feature
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.res.Resources
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.Toast
 import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
+    //    @RequiresApi(24)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,7 +28,41 @@ class MainActivity : AppCompatActivity() {
         var intent = Intent(this, MyService::class.java)
         var bublinkaService = startService(intent)
 
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkStateReceiver, filter)
 
+//        val connectivityManager = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+//        connectivityManager.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+//            override fun onAvailable(network: Network) {
+//
+//            }
+//        })
+
+    }
+
+    var networkStateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+
+        override fun onReceive(context: Context, intent: Intent) {
+            val noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)
+
+            if (!noConnectivity) {
+                onConnectionFound()
+            } else {
+                onConnectionLost()
+            }
+        }
+    }
+
+
+    fun onConnectionLost() {
+    }
+
+    fun onConnectionFound() {
+        tasks.forEach { v -> v.execute() }
+    }
+
+    companion object {
+        val tasks = ArrayList<AsyncTask<Void, Void, Any>>()
     }
 }
 

@@ -24,11 +24,11 @@ import kotlinx.android.synthetic.main.activity_clan.*
 import kotlinx.android.synthetic.main.clan_conditions.*
 import kotlinx.android.synthetic.main.clan_new.*
 import kotlinx.android.synthetic.main.clan_players.*
+import java.util.concurrent.ExecutionException
 
 
 class Clan : Activity() {
 
-    private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var vm: RecyclerView.LayoutManager
     private lateinit var clanPlayerLayoutManager: RecyclerView.LayoutManager
@@ -187,7 +187,7 @@ class Clan : Activity() {
 
             return try {
                 Result.success(api.myClan(getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, "")))
-            } catch (e: ApiException) {
+            } catch (e: Exception) {
                 Result.failure(e)
             }
 
@@ -200,13 +200,8 @@ class Clan : Activity() {
                 refreshData()
                 refreshClanPlayersData()
 //                textView4.text = success.name
-            } catch (e: ApiException) {
-                when (e.code) {
-//                    400 -> textView4.text = "Something is missing"
-//                    404 -> textView4.text = "No clan"
-//                    401 -> textView4.text = "Unauthorized"
-//                    500 -> textView4.text = "Something is fucked up"
-                }
+            } catch (e: Exception) {
+//                }
             } finally {
 //                showProgress(false)
             }
@@ -227,7 +222,7 @@ class Clan : Activity() {
 
             return try {
                 Result.success(api.list(getSharedPreferences(LoginActivity.PREFERENCE, Activity.MODE_PRIVATE).getString(LoginActivity.APIKEY, "")))
-            } catch (e: ApiException) {
+            } catch (e: Exception) {
                 Result.failure(e)
             }
 
@@ -255,12 +250,7 @@ class Clan : Activity() {
 
 //                textView4.text = success.name
             } catch (e: ApiException) {
-                when (e.code) {
-//                    400 -> textView4.text = "Something is missing"
-//                    404 -> textView4.text = "No clan"
-//                    401 -> textView4.text = "Unauthorized"
-//                    500 -> textView4.text = "Something is fucked up"
-                }
+            } catch (e: ExecutionException) {
             } finally {
 //                showProgress(false)
             }

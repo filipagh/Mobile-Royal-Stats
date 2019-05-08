@@ -21,7 +21,6 @@ import android.widget.Button
 import com.bsk.floatingbubblelib.FloatingBubbleConfig
 import com.bsk.floatingbubblelib.FloatingBubbleService
 import io.swagger.client.api.PlayersApi
-import io.swagger.client.api.UsersApi
 import io.swagger.client.model.Tag
 import io.swagger.client.model.UserStat
 
@@ -195,7 +194,7 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
 
     companion object {
 
-        const val API_BASE_PATH = "http://pumec.zapto.org:8080/Mobile-Royal-Stats-Server_war/rest"
+        const val API_BASE_PATH = "http://192.168.0.213:8080/Mobile_Royal_Stats_Server_war_exploded/rest"
 
     }
 
