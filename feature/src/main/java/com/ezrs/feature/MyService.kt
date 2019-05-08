@@ -24,6 +24,9 @@ import io.swagger.client.api.PlayersApi
 import io.swagger.client.api.UsersApi
 import io.swagger.client.model.Tag
 import io.swagger.client.model.UserStat
+import okhttp3.WebSocket
+
+import java.net.URI
 
 /**
  * service na obsluhu bublinky
@@ -38,16 +41,24 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
     lateinit var rootPlayerStats: View
     lateinit var playerStatsContent: UserStat
     lateinit var bubbleUtils: BubbleUtils
+    lateinit var ws : WebSocket
 
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        ws.close(1000,"bye")
+
+    }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         //odchytenie player tag z nacitania scrshotu
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 IntentFilter("PlayerStatsTag"))
+        val webSocketCli = WebSocketCli()
+        ws = webSocketCli.run(bubbleUtils,rootPlayerStats)
 
         return super.onStartCommand(intent, flags, startId)
 
@@ -60,8 +71,17 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
             val tag = intent.getStringExtra("Tag")
             Log.d("receiver", "Got message: $tag")
             if (!tag.isNullOrEmpty()) {
-                val task = LoadPlayerStatsTask(tag)
-                task.execute()
+                val t = Tag()
+                t.tag = tag
+
+                val sb = StringBuilder()
+                sb.append("class Tag {\n")
+                sb.append("  tag: ").append(t.tag).append("\n")
+                sb.append("}\n")
+                ws.send(sb.toString())
+
+//                val task = LoadPlayerStatsTask(tag)
+//                task.execute()
                 rootPlayerStats.visibility = View.VISIBLE
                 setState(true)
             } else {
