@@ -12,6 +12,8 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import io.swagger.client.ApiException
 import io.swagger.client.api.ConditionsApi
 import io.swagger.client.model.ConditionView
@@ -125,7 +127,15 @@ class CreateCondition : Activity() {
             } catch (e: ApiException) {
                 name.error = "Something went wrong with code: " + e.code
             } catch (e: ExecutionException) {
-                MainActivity.tasks.add(CreateConditionTask(v) as AsyncTask<Void, Void, Any>)
+                val value = getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).getString(PREFERENCE_KEY, "")
+                var list = ArrayList<ConditionView>()
+                val gson = Gson()
+                if (value != "") {
+                    val turnsType = object : TypeToken<ArrayList<ConditionView>>() {}.type
+                    list = gson.fromJson<ArrayList<ConditionView>>(value, turnsType)
+                }
+                list.add(v)
+                getSharedPreferences(MainActivity.TASK_PREFERENCE, Activity.MODE_PRIVATE).edit().putString(PREFERENCE_KEY, gson.toJson(list)).apply()
                 showProgress(false)
                 finish()
             }
@@ -138,5 +148,6 @@ class CreateCondition : Activity() {
 
     companion object {
         const val INTENT_ID = "id"
+        const val PREFERENCE_KEY = "create"
     }
 }
