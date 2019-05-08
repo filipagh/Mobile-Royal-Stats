@@ -6,7 +6,6 @@ import io.swagger.client.ApiInvoker
 import io.swagger.client.model.UserStat
 import okhttp3.*
 import okio.ByteString
-import java.util.concurrent.TimeUnit
 
 
 class WebSocketCli: WebSocketListener() {
@@ -17,17 +16,15 @@ class WebSocketCli: WebSocketListener() {
     fun run(bubbleUtilsIn : BubbleUtils,rootPlayerStatsIn : View): WebSocket {
         bubbleUtils=bubbleUtilsIn
         rootPlayerStats=rootPlayerStatsIn
-        val client = OkHttpClient.Builder()
-                .readTimeout(0, TimeUnit.MILLISECONDS)
-                .build()
+        val c = OkHttpClient()
 
-        val request = Request.Builder()
+        val r = Request.Builder()
                 .url("ws://pumec.zapto.org:8080/Mobile-Royal-Stats-Server_war/example")
                 .build()
-        val ws = client.newWebSocket(request, this)
+        val ws = c.newWebSocket(r, this)
         // Trigger shutdown of the dispatcher's executor so this process can exit cleanly.
 
-        client.dispatcher().executorService().shutdown()
+
         return ws
     }
 

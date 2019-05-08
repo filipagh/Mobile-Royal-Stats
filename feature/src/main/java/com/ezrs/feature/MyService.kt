@@ -20,13 +20,11 @@ import android.view.View
 import android.widget.Button
 import com.bsk.floatingbubblelib.FloatingBubbleConfig
 import com.bsk.floatingbubblelib.FloatingBubbleService
+import com.google.gson.Gson
 import io.swagger.client.api.PlayersApi
-import io.swagger.client.api.UsersApi
 import io.swagger.client.model.Tag
 import io.swagger.client.model.UserStat
 import okhttp3.WebSocket
-
-import java.net.URI
 
 /**
  * service na obsluhu bublinky
@@ -57,11 +55,8 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
         //odchytenie player tag z nacitania scrshotu
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 IntentFilter("PlayerStatsTag"))
-        val webSocketCli = WebSocketCli()
-        ws = webSocketCli.run(bubbleUtils,rootPlayerStats)
 
         return super.onStartCommand(intent, flags, startId)
-
     }
 
     // handlovanie udalosti
@@ -73,12 +68,11 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
             if (!tag.isNullOrEmpty()) {
                 val t = Tag()
                 t.tag = tag
-
-                val sb = StringBuilder()
-                sb.append("class Tag {\n")
-                sb.append("  tag: ").append(t.tag).append("\n")
-                sb.append("}\n")
-                ws.send(sb.toString())
+//                val sb = StringBuilder()
+//                sb.append("{\n")
+//                sb.append("  \"tag\": ").append(t.tag).append("\n")
+//                sb.append("}\n")
+                ws.send(Gson().toJson(t))
 
 //                val task = LoadPlayerStatsTask(tag)
 //                task.execute()
@@ -115,6 +109,8 @@ class MyService : FloatingBubbleService(), Tab1.OnFragmentInteractionListener {
         rootPlayerStats.visibility = View.GONE
 
         bubbleUtils = BubbleUtils(context, root)
+        val webSocketCli = WebSocketCli()
+        ws = webSocketCli.run(bubbleUtils, rootPlayerStats)
 
         return FloatingBubbleConfig.Builder()
 
