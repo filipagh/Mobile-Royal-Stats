@@ -1,5 +1,8 @@
 package com.ezrs.feature
 
+import android.content.Context
+import android.content.Intent
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.View
 import io.swagger.client.ApiInvoker
@@ -12,10 +15,12 @@ class WebSocketCli: WebSocketListener() {
 
     lateinit var bubbleUtils : BubbleUtils
     lateinit var rootPlayerStats : View
+    lateinit var context : Context
 
-    fun run(bubbleUtilsIn : BubbleUtils,rootPlayerStatsIn : View): WebSocket {
+    fun run(bubbleUtilsIn : BubbleUtils,rootPlayerStatsIn : View, contextIn: Context): WebSocket {
         bubbleUtils=bubbleUtilsIn
         rootPlayerStats=rootPlayerStatsIn
+        context=contextIn
         val c = OkHttpClient()
 
         val r = Request.Builder()
@@ -34,12 +39,13 @@ class WebSocketCli: WebSocketListener() {
 
     override fun onMessage(webSocket: WebSocket, text: String) {
         Log.d("WS",text)
-        bubbleUtils.updatePlayerStatsLayout(rootPlayerStats, ApiInvoker.deserialize(text, "", UserStat::class.java)as UserStat )
+        sendData(text)
+
     }
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
         Log.d("WS",bytes.hex())
-        bubbleUtils.updatePlayerStatsLayout(rootPlayerStats, ApiInvoker.deserialize(bytes.hex(), "", UserStat::class.java)as UserStat )
+        sendData(bytes.hex())
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
@@ -50,4 +56,12 @@ class WebSocketCli: WebSocketListener() {
         t.printStackTrace()
     }
 
+    fun sendData(json : String) {
+        val intent = Intent("PlayerStats")
+        // You can also include some extra data.
+
+        intent.putExtra("json", json)
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+
+    }
 }
